@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.setupbox",
+  "applicationId": "com.charan.setupBox",
   "variantName": "release",
   "elements": [
     {
