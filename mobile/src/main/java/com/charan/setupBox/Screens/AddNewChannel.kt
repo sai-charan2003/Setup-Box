@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -320,7 +321,7 @@ fun AddNewChannel(navHostController: NavHostController,id:Int?) {
                 
                 ListItem({
                     Row(modifier=Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                        Text(text = "Select Category")
+                        Text(text = "Select Category",modifier=Modifier.padding(top=10.dp),)
                         Spacer(Modifier.weight(1f))
 
                         TextButton(onClick = {showDropdown=true}, contentPadding = PaddingValues(3.dp)) {
@@ -397,6 +398,7 @@ fun AddNewChannel(navHostController: NavHostController,id:Int?) {
 }
 enum class Categories{
     NEWS,
-    ENTERTAINMENT
+    ENTERTAINMENT,
+    SPORTS
 }
 

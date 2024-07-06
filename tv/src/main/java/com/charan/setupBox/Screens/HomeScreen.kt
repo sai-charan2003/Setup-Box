@@ -42,6 +42,7 @@ fun HomeScreen(viewModel: ViewModel){
      val data = viewModel.allData.collectAsState()
     val newsItems = data.value.filter { it.Category == Constants.NEWS }
     val entertainment = data.value.filter { it.Category==Constants.ENTERTAINMENT}
+    val sport = data.value.filter { it.Category == Constants.SPORTS }
     val focusRequester = remember { FocusRequester() }
 
 
@@ -75,22 +76,24 @@ fun HomeScreen(viewModel: ViewModel){
             }
 
             item {
+                if (newsItems.isNotEmpty()) {
 
-                TvLazyRow {
+                    TvLazyRow {
 
-                    items(newsItems.size) { cardItem ->
-                        if(cardItem==0){
-                            LaunchedEffect(key1 = Unit) {
-                                focusRequester.requestFocus()
+                        items(newsItems.size) { cardItem ->
+                            if (cardItem == 0) {
+                                LaunchedEffect(key1 = Unit) {
+                                    focusRequester.requestFocus()
 
+                                }
                             }
-                        }
 
-                        CardItem(
-                            item = newsItems[cardItem],
-                            context = context,
-                            if (cardItem == 0) Modifier.focusRequester(focusRequester) else Modifier
-                        )
+                            CardItem(
+                                item = newsItems[cardItem],
+                                context = context,
+                                if (cardItem == 0) Modifier.focusRequester(focusRequester) else Modifier
+                            )
+                        }
                     }
                 }
             }
@@ -99,16 +102,38 @@ fun HomeScreen(viewModel: ViewModel){
 
             }
             item {
-                TvLazyRow {
-                    items(entertainment.size) { cardItem ->
+                if (entertainment.isNotEmpty()) {
+                    TvLazyRow {
+                        items(entertainment.size) { cardItem ->
 
 
-                        CardItem(
-                            item = entertainment[cardItem],
-                            context = context,
-                            modifier=Modifier
+                            CardItem(
+                                item = entertainment[cardItem],
+                                context = context,
+                                modifier = Modifier
                             )
 
+                        }
+                    }
+                }
+            }
+            item {
+                Text(Constants.SPORTS, modifier = Modifier.padding(start = 20.dp, top = 50.dp))
+            }
+
+            item {
+                if (sport.isNotEmpty()) {
+
+                    TvLazyRow {
+
+                        items(sport.size) { cardItem ->
+
+                            CardItem(
+                                item = sport[cardItem],
+                                context = context,
+                                modifier = Modifier
+                            )
+                        }
                     }
                 }
             }
