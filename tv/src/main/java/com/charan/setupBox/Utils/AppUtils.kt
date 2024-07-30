@@ -21,21 +21,24 @@ object AppUtils {
         }
     }
 
-    fun openApp(context: Context, packageName: String) {
+    private fun openApp(context: Context, packageName: String) {
+        try {
+            val packageManager: PackageManager = context.packageManager
 
-        val packageManager: PackageManager = context.packageManager
+            val launchIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
 
-        val launchIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
+            if (launchIntent != null) {
 
-        if (launchIntent != null) {
-
-            context.startActivity(launchIntent)
-        } else {
-            val playStoreIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
-            if (playStoreIntent.resolveActivity(packageManager) != null) {
-                context.startActivity(playStoreIntent)
+                context.startActivity(launchIntent)
+            } else {
+                val playStoreIntent =
+                    Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+                if (playStoreIntent.resolveActivity(packageManager) != null) {
+                    context.startActivity(playStoreIntent)
+                }
             }
+        } catch (e: Exception){
+            Toast.makeText(context, e.message,Toast.LENGTH_LONG).show()
         }
     }
 
