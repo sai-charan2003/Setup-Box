@@ -1,7 +1,14 @@
 package com.charan.setupBox.Navigation
 
-sealed class Destinations(val route:String) {
-    object Home: Destinations("Home")
-    object AddNewChannel: Destinations("AddNewChannel/{ID}")
+import kotlinx.serialization.Serializable
 
-}
+@Serializable
+data class HomeScreenNav(
+    val channelLink: String?
+)
+
+@Serializable
+data class AddNewChannelScreenNav(
+    val id : Int?,
+    val channelLink : String?
+)

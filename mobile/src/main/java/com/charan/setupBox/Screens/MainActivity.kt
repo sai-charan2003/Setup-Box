@@ -1,6 +1,8 @@
 package com.charan.setupBox.Screens
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +19,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        var sharedURL : String? = null
+        if (Intent.ACTION_SEND == intent.action && intent.type != null) {
+
+            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+
+            if (sharedText != null) {
+                sharedURL = sharedText
+
+            }
+        }
         setContent {
+
             SetupBoxTheme(){
                 WindowCompat.setDecorFitsSystemWindows(window, false)
                 Surface(
@@ -27,8 +40,9 @@ class MainActivity : AppCompatActivity() {
                 ) {
 
                     val navController = rememberNavController()
+                    Log.d("TAG", "onCreate: $sharedURL")
 
-                    NavigationAppHost(navHostController = navController)
+                    NavigationAppHost(navHostController = navController, sharedURL = sharedURL)
 
                 }
 

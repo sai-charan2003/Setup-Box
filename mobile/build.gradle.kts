@@ -2,10 +2,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-kapt")
-    id("org.jetbrains.kotlin.plugin.serialization")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.kotlin.serialization)
 
 }
 
@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.gotrue.kt)
     annotationProcessor (libs.androidx.room.compiler)
     kapt("androidx.room:room-compiler:2.6.1")
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation ("androidx.core:core-splashscreen:1.0.1")

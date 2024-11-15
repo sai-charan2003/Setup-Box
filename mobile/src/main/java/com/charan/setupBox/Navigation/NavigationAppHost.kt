@@ -1,5 +1,6 @@
 package com.charan.setupBox.Navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -11,15 +12,16 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.charan.setupBox.Screens.AddNewChannel
 import com.charan.setupBox.Screens.HomeScreen
 
 @Composable
-fun NavigationAppHost(navHostController: NavHostController) {
+fun NavigationAppHost(navHostController: NavHostController,sharedURL : String?) {
     NavHost(
         navController = navHostController,
 
-        startDestination = Destinations.Home.route,
+        startDestination = HomeScreenNav(channelLink = sharedURL),
         enterTransition = {
             fadeIn() + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Start,
@@ -49,16 +51,14 @@ fun NavigationAppHost(navHostController: NavHostController) {
             )
         },
     ){
-        composable(Destinations.Home.route){
-            HomeScreen(navHostController = navHostController)
-
+        composable<HomeScreenNav> {
+            val args = it.toRoute<HomeScreenNav>()
+            HomeScreen(navHostController = navHostController, sharedURL = args.channelLink)
         }
-        composable(Destinations.AddNewChannel.route, arguments = listOf(navArgument("ID"){
-            type= NavType.IntType
-        })){
-
-            AddNewChannel(navHostController = navHostController, id = it.arguments?.getInt("ID"))
-
+        composable<AddNewChannelScreenNav> {
+            val args = it.toRoute<AddNewChannelScreenNav>()
+            AddNewChannel(navHostController = navHostController, id = args.id, sharedURL = args.channelLink)
         }
+
     }
 }

@@ -68,7 +68,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNewChannel(navHostController: NavHostController,id:Int?) {
+fun AddNewChannel(navHostController: NavHostController,id:Int?,sharedURL : String?) {
     val application = LocalContext.current.applicationContext as Application
     val scroll = TopAppBarDefaults.pinnedScrollBehavior()
     val viewModel = viewModel<ViewModel>(
@@ -92,7 +92,7 @@ fun AddNewChannel(navHostController: NavHostController,id:Int?) {
         mutableStateOf("")
     }
     var channelLink by remember {
-        mutableStateOf("")
+        mutableStateOf(sharedURL ?: "")
     }
     var packageName by remember {
         mutableStateOf("")
