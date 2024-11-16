@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-kapt")
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
@@ -52,6 +53,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion ="1.5.2"
     }
+    hilt { enableAggregatingTask = false }
 }
 
 dependencies {
@@ -84,4 +86,7 @@ dependencies {
     implementation (libs.androidx.runtime.livedata)
     implementation (libs.ktor.utils)
     implementation(libs.ktor.client.cio)
+    implementation (libs.hilt.android)
+    kapt (libs.hilt.compiler)
+    implementation (libs.androidx.hilt.navigation.compose)
 }
