@@ -5,23 +5,31 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Surface
 import com.charan.setupBox.presentation.ViewModel.ViewModel
 import com.charan.setupBox.presentation.HomeScreen
+import com.charan.setupBox.presentation.navigation.NavAppHost
 import com.charan.setupBox.ui.theme.SetupBoxTheme
+import com.charan.setupBox.utils.SupabaseUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -29,7 +37,19 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalTvMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        val isLoggedIn = mutableStateOf(false)
+        val isExecuted = mutableStateOf(false)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                !isExecuted.value
+            }
+            lifecycleScope.launch {
+                isLoggedIn.value = SupabaseUtils.getSessionToken(this@MainActivity)
+                Log.d("TAG", "onCreate: $isLoggedIn")
+                delay(1000)
+                isExecuted.value = true
+            }
+        }
         setContent {
             SetupBoxTheme(isInDarkTheme = true) {
                 val viewModel by viewModels<ViewModel>()
@@ -39,7 +59,8 @@ class MainActivity : ComponentActivity() {
                     shape = RectangleShape,
 
                 ) {
-                    HomeScreen(viewModel = viewModel)
+                    val navHostController = rememberNavController()
+                    NavAppHost(navHostController = navHostController,isLoggedIn.value)
                 }
             }
         }

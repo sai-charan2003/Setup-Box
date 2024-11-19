@@ -17,6 +17,8 @@ android {
 
     val url:String=com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir,providers).getProperty("SUPABASE_URL")
 
+    val google_signin = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir,providers).getProperty("GOOGLE_SERVER_CLIENT_ID")
+
     defaultConfig {
         applicationId = "com.charan.setupBox"
         minSdk = 21
@@ -27,6 +29,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String","SUPABASE_ANON_KEY","\"$key\"")
         buildConfigField("String", "SUPABASE_URL", "\"$url\"")
+        buildConfigField("String","GOOGLE_SERVER_CLIENT_ID","\"$google_signin\"")
     }
 
 
@@ -73,14 +76,14 @@ dependencies {
     implementation (libs.androidx.room.ktx)
     implementation (libs.realtime.kt)
     implementation (libs.storage.kt)
-    implementation(libs.gotrue.kt)
     annotationProcessor (libs.androidx.room.compiler)
     kapt("androidx.room:room-compiler:2.6.1")
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.auth.kt)
     implementation(libs.coil.compose)
-    implementation ("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.compose.material:material-icons-extended-android:1.6.5")
+    implementation (libs.androidx.core.splashscreen)
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.5")
     implementation (libs.ktor.client.core)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.androidx.runtime.livedata)
@@ -89,4 +92,10 @@ dependencies {
     implementation (libs.hilt.android)
     kapt (libs.hilt.compiler)
     implementation (libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation( libs.androidx.credentials)
+    implementation (libs.credentials.play.services.auth)
+    implementation (libs.googleid)
+    implementation (libs.play.services.auth)
 }

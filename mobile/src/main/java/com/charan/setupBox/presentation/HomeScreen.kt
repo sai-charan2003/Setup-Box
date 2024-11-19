@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -47,7 +48,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.charan.setupBox.navigation.AddNewChannelScreenNav
+import com.charan.setupBox.presentation.navigation.AddNewChannelScreenNav
+import com.charan.setupBox.presentation.navigation.TVAuthenticationNav
 
 import com.charan.setupBox.utils.ProcessState
 import com.charan.setupBox.presentation.viewModel.ViewModel
@@ -90,6 +92,12 @@ fun HomeScreen(
             LargeTopAppBar(
                 title = { Text("Setup Box") },
                 scrollBehavior = scroll,
+                actions = {
+                    Button(onClick = { navHostController.navigate(TVAuthenticationNav) }) {
+                        Text("Authenticate TV")
+
+                    }
+                }
 
             )
 

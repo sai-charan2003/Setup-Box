@@ -1,4 +1,4 @@
-package com.charan.setupBox.navigation
+package com.charan.setupBox.presentation.navigation
 
 import kotlinx.serialization.Serializable
 
@@ -12,3 +12,9 @@ data class AddNewChannelScreenNav(
     val id : Int?,
     val channelLink : String?
 )
+
+@Serializable
+object LoginScreenNav
+
+@Serializable
+object TVAuthenticationNav

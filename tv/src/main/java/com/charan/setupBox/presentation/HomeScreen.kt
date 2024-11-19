@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.tv.foundation.lazy.list.TvLazyColumn
 import androidx.tv.foundation.lazy.list.TvLazyRow
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -30,14 +32,16 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.charan.setupBox.presentation.Components.CardItem
+import com.charan.setupBox.presentation.components.CardItem
 import com.charan.setupBox.R
 import com.charan.setupBox.utils.AppConstants
 import com.charan.setupBox.presentation.ViewModel.ViewModel
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: ViewModel){
+fun HomeScreen(
+    navHostController: NavHostController,
+    viewModel: ViewModel= hiltViewModel()){
     val context = LocalContext.current
      val data = viewModel.allData.collectAsState()
     val newsItems = data.value.filter { it.Category == AppConstants.NEWS }
@@ -47,7 +51,9 @@ fun HomeScreen(viewModel: ViewModel){
 
 
 
-    Column(modifier=Modifier.fillMaxSize().background(Color.Black)) {
+    Column(modifier= Modifier
+        .fillMaxSize()
+        .background(Color.Black)) {
 
         TvLazyColumn(modifier = Modifier) {
             item{

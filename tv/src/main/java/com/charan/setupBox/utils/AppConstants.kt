@@ -7,4 +7,6 @@ object AppConstants {
     const val AppName= "Setup Box"
     const val SPORTS ="SPORTS"
     val SETUPBOXCONTENT = "SetupBoxContent"
+    val TVAUTHENTICATION = "TVAuthentication"
+    val TVAuthenticationChannelId = "tv_channel_id"
 }

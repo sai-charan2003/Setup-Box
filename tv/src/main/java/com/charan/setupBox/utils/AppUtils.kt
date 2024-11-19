@@ -40,5 +40,12 @@ object AppUtils {
         }
     }
 
+    fun generateRandomString(length: Int = 5): String {
+        val charset = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return (1..length)
+            .map { charset.random() }
+            .joinToString("")
+    }
+
 
 }

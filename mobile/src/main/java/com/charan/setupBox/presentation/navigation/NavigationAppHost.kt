@@ -1,4 +1,4 @@
-package com.charan.setupBox.navigation
+package com.charan.setupBox.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.LinearEasing
@@ -6,19 +6,24 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.charan.setupBox.data.remote.supabaseClient
 import com.charan.setupBox.presentation.AddNewChannel
 import com.charan.setupBox.presentation.HomeScreen
+import com.charan.setupBox.presentation.login.LoginScreen
+import com.charan.setupBox.presentation.tvAutentication.TVAuthentication
+import com.charan.setupBox.utils.SupabaseUtils
 
 @Composable
-fun NavigationAppHost(navHostController: NavHostController,sharedURL : String?) {
+fun NavigationAppHost(navHostController: NavHostController,sharedURL : String?,isLoggedIn : Boolean?) {
     NavHost(
         navController = navHostController,
 
-        startDestination = HomeScreenNav(channelLink = sharedURL),
+        startDestination =if(isLoggedIn==false) LoginScreenNav else HomeScreenNav(sharedURL),
         enterTransition = {
             fadeIn() + slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Start,
@@ -55,6 +60,13 @@ fun NavigationAppHost(navHostController: NavHostController,sharedURL : String?) 
         composable<AddNewChannelScreenNav> {
             val args = it.toRoute<AddNewChannelScreenNav>()
             AddNewChannel(navHostController = navHostController, id = args.id, sharedURL = args.channelLink)
+        }
+        composable<LoginScreenNav> {
+            LoginScreen(navHostController = navHostController)
+        }
+        
+        composable<TVAuthenticationNav> { 
+            TVAuthentication(navHostController = navHostController)
         }
 
     }

@@ -1,4 +1,4 @@
-package com.charan.setupBox.presentation.Components
+package com.charan.setupBox.presentation.components
 
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
@@ -12,10 +12,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardContainerDefaults
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.CardLayoutDefaults
+
 import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.StandardCardLayout
+import androidx.tv.material3.StandardCardContainer
+
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import com.charan.setupBox.utils.AppUtils
@@ -25,13 +28,13 @@ import com.charan.setupBox.data.local.entity.SetupBoxContent
 @Composable
 fun CardItem(item: SetupBoxContent, context:Context, modifier: Modifier){
 
-    StandardCardLayout(
+    StandardCardContainer(
         modifier = Modifier
             .width(300.dp)
             .padding(25.dp)
             .then(modifier),
         imageCard = {
-            CardLayoutDefaults.ImageCard(
+            Card(
                 onClick = {
                     AppUtils.openLink(context, item.app_Package!!, item.channelLink!!)
                 },
