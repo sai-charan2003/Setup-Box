@@ -1,5 +1,7 @@
 package com.charan.setupBox.presentation.settings.aboutapp
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,14 +15,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.charan.setupBox.BuildConfig
 import com.charan.setupBox.presentation.navigation.LicenseScreenNav
+import com.charan.setupBox.utils.AppConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutAppScreen(navHostController: NavHostController){
     val scroll = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             LargeTopAppBar(
@@ -43,6 +48,8 @@ fun AboutAppScreen(navHostController: NavHostController){
                 ListItem(
                     headlineContent = { Text(text = "Project on Github") },
                     modifier = Modifier.clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.GITHUB_URL))
+                        context.startActivity(intent)
 
                     }
                 )
