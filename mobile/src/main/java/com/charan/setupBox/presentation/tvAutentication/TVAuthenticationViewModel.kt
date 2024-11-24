@@ -14,7 +14,7 @@ class TVAuthenticationViewModel @Inject constructor(private val supabaseRepo: Su
 
     fun addAuthenticationToken(code : String,context: Context){
         viewModelScope.launch (Dispatchers.IO){
-            supabaseRepo.attachSessionId(code,context)
+            supabaseRepo.attachEmailIdToCode(code,context)
         }
 
 

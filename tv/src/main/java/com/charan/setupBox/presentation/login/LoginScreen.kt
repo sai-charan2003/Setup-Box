@@ -60,16 +60,14 @@ fun LoginScreen(
             is LoginState.CodeGeneratedError -> {
                 Toast.makeText(context,(loginState as LoginState.CodeGeneratedError).error,Toast.LENGTH_LONG).show()
             }
-            LoginState.Loading -> {
 
-            }
             is LoginState.OTPError -> {
                 Toast.makeText(context,(loginState as LoginState.OTPError).error,Toast.LENGTH_LONG).show()
 
             }
             is LoginState.OTPSentTo -> {
                 Toast.makeText(context,"OTP Sent to ${(loginState as LoginState.OTPSentTo).email}",Toast.LENGTH_LONG).show()
-                navHostController.navigate(OTPScreenNav((loginState as LoginState.OTPSentTo).email))
+                navHostController.navigate(OTPScreenNav((loginState as LoginState.OTPSentTo).email,code))
                 viewModel.resetLoginState()
 
 
@@ -89,10 +87,10 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Image(painter = painterResource(id = R.drawable.app_icon), contentDescription = "appIcon",modifier = Modifier.size(100.dp))
-        Text(text = "1. Open  \"Setup Box\" app on your mobile device.", style = MaterialTheme.typography.headlineSmall,modifier=Modifier.padding(5.dp), textAlign = TextAlign.Start)
-        Text(text = "2. Enter the code shown below:",style = MaterialTheme.typography.headlineSmall,modifier=Modifier.padding(5.dp),textAlign = TextAlign.Start)
-        code?.let { CodeLabel(code = it, modifier = Modifier) }
-        Text(text = "3. Then, check your email for the OTP and enter it in the next screen",style = MaterialTheme.typography.headlineSmall,modifier=Modifier.padding(5.dp),textAlign = TextAlign.Start)
+        Text(text = "1. Open  \"Setup Box\" app on your mobile device.", style = MaterialTheme.typography.headlineSmall,modifier=Modifier.padding(10.dp), textAlign = TextAlign.Start)
+        Text(text = "2. Enter the code shown below:",style = MaterialTheme.typography.headlineSmall,modifier=Modifier.padding(bottom = 20.dp, top = 10.dp),textAlign = TextAlign.Start)
+        CodeLabel(code = code, modifier = Modifier, isGenerating = loginState is LoginState.Loading)
+        Text(text = "3. Then, check your email for the OTP and enter it in the next screen",style = MaterialTheme.typography.headlineSmall,modifier=Modifier.padding(top = 20.dp),textAlign = TextAlign.Start)
         
     }
 

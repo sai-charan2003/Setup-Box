@@ -22,6 +22,10 @@ interface SupabaseRepo {
 
     suspend fun checkAuthenticationStatus() : Flow<ProcessState>
 
+    suspend fun updateAuthenticationStatus(code : String)
+
+    suspend fun logout() : Flow<ProcessState>
+
 
 
 }

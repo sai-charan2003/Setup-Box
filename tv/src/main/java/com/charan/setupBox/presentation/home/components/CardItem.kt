@@ -1,4 +1,4 @@
-package com.charan.setupBox.presentation.components
+package com.charan.setupBox.presentation.home.components
 
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
@@ -26,7 +26,10 @@ import com.charan.setupBox.data.local.entity.SetupBoxContent
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun CardItem(item: SetupBoxContent, context:Context, modifier: Modifier){
+fun CardItem(
+    item: SetupBoxContent,
+    modifier: Modifier,
+    onClick: (item : SetupBoxContent)-> Unit){
 
     StandardCardContainer(
         modifier = Modifier
@@ -36,7 +39,7 @@ fun CardItem(item: SetupBoxContent, context:Context, modifier: Modifier){
         imageCard = {
             Card(
                 onClick = {
-                    AppUtils.openLink(context, item.app_Package!!, item.channelLink!!)
+                    onClick(item)
                 },
                 interactionSource = it,
                 colors = CardDefaults.colors(containerColor = Color.Transparent),

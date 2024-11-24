@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 data class TVAuthentication(
     val id : Int? = null,
     val tv_code : String? = null,
-    val session_id : String? = null
+    val email : String? = null,
+    val created_at : String? = null,
+    val isAuthenticated : Boolean? = null
 )

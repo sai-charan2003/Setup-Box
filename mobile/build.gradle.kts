@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.mikepenz.aboutlibrary)
 
 }
 
@@ -23,8 +24,8 @@ android {
         applicationId = "com.charan.setupBox"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String","SUPABASE_ANON_KEY","\"$key\"")
@@ -98,4 +99,6 @@ dependencies {
     implementation (libs.credentials.play.services.auth)
     implementation (libs.googleid)
     implementation (libs.play.services.auth)
+    implementation (libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.m3)
 }

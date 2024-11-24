@@ -19,7 +19,7 @@ class SetUpBoxRepoImp @Inject constructor(private val setUpBoxContentDAO: SetUpB
         return setUpBoxContentDAO.getAllDataNonLiveData()
     }
 
-    override fun deleteById(id: Int) {
+    override fun deleteByUUID(id: String) {
         setUpBoxContentDAO.deleteById(id)
     }
 
@@ -33,6 +33,10 @@ class SetUpBoxRepoImp @Inject constructor(private val setUpBoxContentDAO: SetUpB
 
     override fun selectDistinctAppPackage(): List<String?> {
         return setUpBoxContentDAO.selectDistinctAppPackage()
+    }
+
+    override fun clearData() {
+        setUpBoxContentDAO.clearData()
     }
 
 

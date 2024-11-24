@@ -22,8 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Surface
-import com.charan.setupBox.presentation.ViewModel.ViewModel
-import com.charan.setupBox.presentation.HomeScreen
 import com.charan.setupBox.presentation.navigation.NavAppHost
 import com.charan.setupBox.ui.theme.SetupBoxTheme
 import com.charan.setupBox.utils.SupabaseUtils
@@ -52,8 +50,7 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             SetupBoxTheme(isInDarkTheme = true) {
-                val viewModel by viewModels<ViewModel>()
-                viewModel.getSupabaseData()
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     shape = RectangleShape,

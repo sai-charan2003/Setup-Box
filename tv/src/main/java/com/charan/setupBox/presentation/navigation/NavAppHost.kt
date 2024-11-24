@@ -5,10 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.charan.setupBox.presentation.HomeScreen
+import com.charan.setupBox.presentation.home.HomeScreen
 import com.charan.setupBox.presentation.login.LoginScreen
 import com.charan.setupBox.presentation.login.OTPScreen
-import io.github.jan.supabase.gotrue.providers.builtin.OTP
+import com.charan.setupBox.presentation.settings.SettingsScreen
 
 @Composable
 fun NavAppHost(
@@ -26,7 +26,10 @@ fun NavAppHost(
         }
         composable<OTPScreenNav> {
             val arg = it.toRoute<OTPScreenNav>()
-            OTPScreen(navHostController = navHostController, emailId = arg.email!!)
+            OTPScreen(navHostController = navHostController, emailId = arg.email!!,code = arg.generatedCode!!)
+        }
+        composable<SettingsScreenNav> {
+            SettingsScreen(navHostController = navHostController)
         }
 
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.charan.setupBox.data.local.entity.SetupBoxContent
 import com.charan.setupBox.data.repository.SupabaseRepo
 import com.charan.setupBox.repository.SetUpBoxContentRepository
+import com.charan.setupBox.utils.ProcessState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,10 +15,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo,private val setUpBoxContentRepository: SetUpBoxContentRepository): ViewModel() {
+class HomeViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo,private val setUpBoxContentRepository: SetUpBoxContentRepository): ViewModel() {
 
     private val _allData = MutableStateFlow(emptyList<SetupBoxContent>())
     val allData = _allData.asStateFlow()
+    private val _openModalSheet = MutableStateFlow(false)
+    val openModalSheet = _openModalSheet.asStateFlow()
+
+    private val _logoutState = MutableStateFlow<ProcessState?>(null)
+    val logoutState = _logoutState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -25,6 +31,7 @@ class ViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo,priva
                 _allData.tryEmit(it)
             }
         }
+        getSupabaseData()
 
     }
 
@@ -34,6 +41,21 @@ class ViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo,priva
 
     fun getSupabaseData() = viewModelScope.launch (Dispatchers.IO){
         supabaseRepo.getDataFromSupabase()
+    }
+
+    fun modalSheetState(){
+        _openModalSheet.value = !_openModalSheet.value
+    }
+
+    fun logout(){
+        _logoutState.tryEmit(ProcessState.Loading)
+        viewModelScope.launch(Dispatchers.IO) {
+            supabaseRepo.logout().collectLatest {
+                _logoutState.tryEmit(it)
+            }
+
+
+        }
     }
 
 

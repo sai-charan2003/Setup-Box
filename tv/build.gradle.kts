@@ -21,8 +21,8 @@ android {
         applicationId = "com.charan.setupBox"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -97,4 +97,5 @@ dependencies {
     implementation (libs.androidx.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.compose)
+    implementation ("androidx.compose.material:material:1.7.5")
 }

@@ -23,4 +23,7 @@ interface SetUpBoxContentDAO {
     fun deleteById(id:Int)
     @Update
     fun update(setupBoxContent: SetupBoxContent)
+
+    @Query("DELETE FROM SetupBoxContent")
+    fun clearAllData()
 }

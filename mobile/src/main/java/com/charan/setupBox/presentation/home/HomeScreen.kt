@@ -1,7 +1,6 @@
-package com.charan.setupBox.presentation
+package com.charan.setupBox.presentation.home
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 
@@ -14,11 +13,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -45,16 +48,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.charan.setupBox.presentation.navigation.AddNewChannelScreenNav
+import com.charan.setupBox.presentation.navigation.SettingsScreenNav
 import com.charan.setupBox.presentation.navigation.TVAuthenticationNav
 
 import com.charan.setupBox.utils.ProcessState
-import com.charan.setupBox.presentation.viewModel.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,19 +62,18 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     navHostController: NavHostController,
     sharedURL : String?,
-    viewModel : ViewModel = hiltViewModel()
+    homeViewModel : HomeViewModel = hiltViewModel()
 ) {
     var channelLink by rememberSaveable {
         mutableStateOf(sharedURL)
 
     }
-    val application = LocalContext.current.applicationContext as Application
+
     val scroll = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val lifecycle= LocalLifecycleOwner.current
-    var isRefreshing by remember {
-        mutableStateOf(false)
-    }
-    val coroutineScope = rememberCoroutineScope()
+    val isRefreshing by homeViewModel.refreshState.collectAsState()
+
+    val showDropDown by homeViewModel.showDropDownMenu.collectAsState()
+
     
     LaunchedEffect(key1 = Unit) {
         if(channelLink.isNullOrEmpty().not()){
@@ -83,7 +82,7 @@ fun HomeScreen(
             channelLink = null
         }
     }
-    val allData=viewModel.allData.collectAsState()
+    val allData=homeViewModel.allData.collectAsState()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -93,10 +92,19 @@ fun HomeScreen(
                 title = { Text("Setup Box") },
                 scrollBehavior = scroll,
                 actions = {
-                    Button(onClick = { navHostController.navigate(TVAuthenticationNav) }) {
-                        Text("Authenticate TV")
+                    IconButton(onClick = { homeViewModel.showDropDownMenu() }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "More" )
 
                     }
+                    DropdownMenu(
+                        expanded = showDropDown,
+                        onDismissRequest = { homeViewModel.hideDropDownMenu() }) {
+                        DropdownMenuItem(
+                            text = { Text("Settings") },
+                            onClick = { navHostController.navigate(SettingsScreenNav);homeViewModel.hideDropDownMenu() })
+                        
+                    }
+
                 }
 
             )
@@ -112,25 +120,9 @@ fun HomeScreen(
         }
     ){
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
+            isRefreshing = isRefreshing is ProcessState.Loading,
             onRefresh = {
-                    viewModel.getSupabaseData().observe(lifecycle){
-                        when(it){
-                            is ProcessState.Error -> {
-                                isRefreshing = false
-                            }
-
-                            ProcessState.Loading -> {
-                                isRefreshing = true
-                            }
-
-                            ProcessState.Success -> {
-                                isRefreshing = false
-                            }
-
-                            null -> {}
-                        }
-                    }
+                homeViewModel.getSupabaseData()
             },
             modifier = Modifier.padding(it)
         ) {

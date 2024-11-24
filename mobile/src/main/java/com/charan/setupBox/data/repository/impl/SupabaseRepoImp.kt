@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.charan.setupBox.BuildConfig
 import com.charan.setupBox.data.local.entity.SetupBoxContent
@@ -27,33 +26,34 @@ import java.util.UUID
 import javax.inject.Inject
 
 class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo) : SupabaseRepo {
-    override suspend fun insertData(setupBoxContent: SetupBoxContent): LiveData<ProcessState> {
-        val processState= MutableLiveData<ProcessState>(ProcessState.Loading)
+    override suspend fun insertData(setupBoxContent: SetupBoxContent): Flow<ProcessState> {
+        val processState= MutableStateFlow<ProcessState>(ProcessState.Loading)
 
             try{
                 supabaseClient.client.from(AppConstants.SETUPBOXCONTENT).insert(
                     SetupBoxContent(
-                        id=null,
                         channelLink = setupBoxContent.channelLink,
                         channelName = setupBoxContent.channelName,
                         channelPhoto = setupBoxContent.channelPhoto,
                         Category = setupBoxContent.Category,
-                        app_Package = setupBoxContent.app_Package
+                        app_Package = setupBoxContent.app_Package,
+                        uuid = UUID.randomUUID().toString(),
+                        email = SupabaseUtils.getEmail()
                     )
                 )
                 setUpBoxRepo.insert(setupBoxContent)
-                processState.postValue(ProcessState.Success)
+                processState.tryEmit(ProcessState.Success)
 
             } catch (e:Exception){
-                processState.postValue(ProcessState.Error(e.message.toString()))
+                processState.tryEmit(ProcessState.Error(e.message.toString()))
                 Log.e("SupabaseError",e.message.toString())
             }
 
         return processState
     }
 
-    override suspend fun updateData(setupBoxContent: SetupBoxContent): LiveData<ProcessState> {
-        val processState= MutableLiveData<ProcessState>(ProcessState.Loading)
+    override suspend fun updateData(setupBoxContent: SetupBoxContent): Flow<ProcessState> {
+        val processState= MutableStateFlow<ProcessState>(ProcessState.Loading)
 
             try{
                 supabaseClient.client
@@ -68,14 +68,15 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
                         }
                     ) {
                         filter {
-                            eq("id",setupBoxContent.id!!)
+                            eq("uuid",setupBoxContent.uuid!!)
+                            eq("email",SupabaseUtils.getEmail()!!)
                         }
                     }
                 setUpBoxRepo.update(setupBoxContent)
-                processState.postValue(ProcessState.Success)
+                processState.tryEmit(ProcessState.Success)
 
             } catch (e:Exception){
-                processState.postValue(ProcessState.Error(e.message.toString()))
+                processState.tryEmit(ProcessState.Error(e.message.toString()))
                 Log.e("SupabaseError",e.message.toString())
             }
 
@@ -83,27 +84,25 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
         return processState
     }
 
-    override suspend fun deleteData(id: Int): LiveData<ProcessState> {
-        val processState= MutableLiveData<ProcessState>(ProcessState.Loading)
+    override suspend fun deleteData(uuid: String): Flow<ProcessState> {
+        val processState= MutableStateFlow<ProcessState>(ProcessState.Loading)
 
             try{
                 supabaseClient.client
                     .from(AppConstants.SETUPBOXCONTENT)
                     .delete{
                         filter {
-                            eq("id",id)
+                            eq("uuid", uuid)
+                            eq("email",SupabaseUtils.getEmail()!!)
 
                         }
 
                     }
-
-
-
-                setUpBoxRepo.deleteById(id)
-                processState.postValue(ProcessState.Success)
+                setUpBoxRepo.deleteByUUID(uuid)
+                processState.tryEmit(ProcessState.Success)
 
             } catch (e:Exception){
-                processState.postValue(ProcessState.Error(e.message.toString()))
+                processState.tryEmit(ProcessState.Error(e.message.toString()))
                 Log.e("SupabaseError",e.message.toString())
             }
 
@@ -111,8 +110,8 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
         return processState
     }
 
-    override suspend fun getData(): LiveData<ProcessState> {
-        val processState= MutableLiveData<ProcessState>(ProcessState.Loading)
+    override suspend fun getData(): Flow<ProcessState> {
+        val processState= MutableStateFlow<ProcessState>(ProcessState.Loading)
 
             try {
                 val remoteData = supabaseClient.client.from(AppConstants.SETUPBOXCONTENT).select()
@@ -120,16 +119,16 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
                 Log.d("TAG", "getSupabaseData: $remoteData")
                 val localData = setUpBoxRepo.getAllDataNonLiveData()
 
-                val localDataIds = localData.map { it.id }.toSet()
-                val remoteDataIds = remoteData.map { it.id }.toSet()
+                val localDataIds = localData.map { it.uuid }.toSet()
+                val remoteDataIds = remoteData.map { it.uuid }.toSet()
 
-                val itemsToInsert = remoteData.filter { it.id !in localDataIds }
-                val itemsToRemove = localData.filter { it.id !in remoteDataIds }
+                val itemsToInsert = remoteData.filter { it.uuid !in localDataIds }
+                val itemsToRemove = localData.filter { it.uuid !in remoteDataIds }
 
                 // Identify items to update
                 val itemsToUpdate = remoteData.filter { remoteItem ->
                     localData.any { localItem ->
-                        localItem.id == remoteItem.id && localItem != remoteItem
+                        localItem.uuid == remoteItem.uuid && localItem != remoteItem
                     }
                 }
 
@@ -138,17 +137,17 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
                 }
 
                 itemsToRemove.forEach {
-                    setUpBoxRepo.deleteById(it.id!!)
+                    setUpBoxRepo.deleteByUUID(it.uuid!!)
                 }
 
                 // Update the local database with the changed items
                 itemsToUpdate.forEach { updatedItem ->
                     setUpBoxRepo.update(updatedItem)
                 }
-                processState.postValue(ProcessState.Success)
+                processState.tryEmit(ProcessState.Success)
             } catch (e:Exception){
                 Log.e("SupabaseError",e.message.toString())
-                processState.postValue(ProcessState.Error(e.message.toString()))
+                processState.tryEmit(ProcessState.Error(e.message.toString()))
             }
 
 
@@ -206,20 +205,36 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
         return googleAuthProcess
     }
 
-    override suspend fun attachSessionId(code: String,context:Context) {
+    override suspend fun attachEmailIdToCode(code: String, context:Context): Flow<ProcessState> {
+        val attachStatus = MutableStateFlow<ProcessState>(ProcessState.Loading)
         try {
             supabaseClient.client.from("TVAuthentication").update(
                 {
-                    set("tv_code",code)
-                    set("session_id",SupabaseUtils.getEmail())
+                    set("email",SupabaseUtils.getEmail())
                 }
             ){
                 filter {
                     eq("tv_code",code)
+                    eq("isAuthenticated",false)
                 }
             }
+            attachStatus.tryEmit(ProcessState.Success)
         } catch (e:Exception){
             Log.d("TAG", "attachSessionId: $e")
+            attachStatus.tryEmit(ProcessState.Error(e.message.toString()))
         }
+        return attachStatus
+    }
+
+    override suspend fun logout(): Flow<ProcessState> {
+        val logoutState = MutableStateFlow<ProcessState>(ProcessState.Loading)
+        try {
+            supabaseClient.client.auth.signOut()
+            setUpBoxRepo.clearData()
+            logoutState.tryEmit(ProcessState.Success)
+        } catch (e:Exception){
+            logoutState.tryEmit(ProcessState.Error(e.message.toString()))
+        }
+        return logoutState
     }
 }

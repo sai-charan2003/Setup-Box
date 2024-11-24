@@ -14,4 +14,33 @@ object SupabaseUtils {
 
         }
     }
+
+    fun getProfilePic() : String? {
+        try {
+            return supabaseClient.client.auth.currentUserOrNull()?.identities?.get(0)?.identityData?.get(
+                "avatar_url"
+            ).toString().substringAfter("\"").substringBefore("\"")
+        } catch (e:Exception){
+            return null
+        }
+    }
+
+    fun getUserName() : String? {
+        try {
+            return supabaseClient.client.auth.currentUserOrNull()?.identities?.get(0)?.identityData?.get(
+                "full_name"
+            ).toString().substringAfter("\"").substringBefore("\"")
+        } catch (e:Exception){
+            return null
+        }
+    }
+
+    fun getEmail() : String? {
+        try {
+            return supabaseClient.client.auth.currentUserOrNull()?.email
+        } catch (e:Exception){
+            return null
+        }
+    }
+
 }

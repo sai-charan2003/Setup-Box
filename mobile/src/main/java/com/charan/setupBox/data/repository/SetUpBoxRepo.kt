@@ -8,8 +8,9 @@ interface SetUpBoxRepo {
     fun insert(setupBoxContent: SetupBoxContent)
     fun getAllData(): Flow<List<SetupBoxContent>>
     fun getAllDataNonLiveData(): List<SetupBoxContent>
-    fun deleteById(id: Int)
+    fun deleteByUUID(id: String)
     fun update(setupBoxContent: SetupBoxContent)
     fun getDataById(id:Int): SetupBoxContent
     fun selectDistinctAppPackage() : List<String?>
+    fun clearData()
 }

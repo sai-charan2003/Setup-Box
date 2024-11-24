@@ -1,4 +1,4 @@
-package com.charan.setupBox.presentation.components
+package com.charan.setupBox.presentation.addChannel.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

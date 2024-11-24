@@ -10,6 +10,7 @@ import com.charan.setupBox.utils.AppConstants
 import com.charan.setupBox.utils.AppUtils
 import com.charan.setupBox.utils.LoginState
 import com.charan.setupBox.utils.ProcessState
+import com.charan.setupBox.utils.SupabaseUtils
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.gotrue.OtpType
 import io.github.jan.supabase.gotrue.SessionStatus
@@ -17,20 +18,17 @@ import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.IDToken
 import io.github.jan.supabase.gotrue.providers.builtin.OTP
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import io.github.jan.supabase.realtime.realtime
-import io.github.jan.supabase.realtime.selectAsFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.subscribe
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
@@ -41,13 +39,13 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxCont
             val remoteData = supabaseClient.client.from(AppConstants.SETUPBOXCONTENT).select()
                 .decodeList<SetupBoxContent>()
             val localData = setUpBoxRepo.getAllDataNonLiveData()
-            val localDataIds = localData.map { it.id }.toSet()
-            val remoteDataIds = remoteData.map { it.id }.toSet()
-            val itemsToInsert = remoteData.filter { it.id !in localDataIds }
-            val itemsToRemove = localData.filter { it.id !in remoteDataIds }
+            val localDataIds = localData.map { it.uuid }.toSet()
+            val remoteDataIds = remoteData.map { it.uuid }.toSet()
+            val itemsToInsert = remoteData.filter { it.uuid !in localDataIds }
+            val itemsToRemove = localData.filter { it.uuid !in remoteDataIds }
             val itemsToUpdate = remoteData.filter { remoteItem ->
                 localData.any { localItem ->
-                    localItem.id == remoteItem.id && localItem != remoteItem
+                    localItem.uuid == remoteItem.uuid && localItem != remoteItem
                 }
             }
             itemsToInsert.forEach {
@@ -71,7 +69,9 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxCont
             supabaseClient.client.from(AppConstants.TVAUTHENTICATION).insert(
                 TVAuthentication(
                     tv_code = code,
-                    session_id = null
+                    email = null,
+                    isAuthenticated = false,
+                    created_at = System.currentTimeMillis().toString()
                 )
 
 
@@ -92,6 +92,7 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxCont
         val changeFlow = channel.postgresChangeFlow<PostgresAction>(schema = "public") {
             table = AppConstants.TVAUTHENTICATION
             filter("tv_code", FilterOperator.EQ, code)
+            filter("isAuthenticated",FilterOperator.EQ,false)
         }
         changeFlow.onEach {
             when(it){
@@ -175,6 +176,40 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxCont
         }.onEach { processState ->
             println("Emitted process state: $processState")
         }
+    }
+
+    override suspend fun updateAuthenticationStatus(code : String) {
+        try {
+            supabaseClient.client.from("TVAuthentication").update(
+                {
+                    set("isAuthenticated",true)
+                }
+            ){
+                filter {
+                    eq("tv_code",code)
+                    eq("isAuthenticated",false)
+                }
+            }
+
+        } catch (e:Exception){
+            Log.d("TAG", "attachSessionId: $e")
+
+        }
+    }
+
+    override suspend fun logout() : Flow<ProcessState> {
+        val logoutState = MutableStateFlow<ProcessState>(ProcessState.Loading)
+        try {
+            supabaseClient.client.auth.signOut()
+            setUpBoxRepo.clearAllData()
+            logoutState.tryEmit(ProcessState.Success())
+
+
+        } catch (e:Exception){
+            logoutState.tryEmit(ProcessState.Error(e.message.toString()))
+
+        }
+        return logoutState
     }
 
 }

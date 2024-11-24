@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SetUpBoxContentDAO {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(setupBoxContent: SetupBoxContent)
 
     @Query("SELECT * FROM setupBoxContent")
@@ -27,13 +27,16 @@ interface SetUpBoxContentDAO {
     @Query("SELECT * FROM SETUPBOXCONTENT")
     fun getAllDataNonLiveData(): List<SetupBoxContent>
 
-    @Query("DELETE FROM SETUPBOXCONTENT WHERE id=:id")
-    fun deleteById(id:Int)
+    @Query("DELETE FROM SETUPBOXCONTENT WHERE uuid=:id")
+    fun deleteById(id:String)
 
     @Query("SELECT DISTINCT(app_Package) FROM setupBoxContent")
     fun selectDistinctAppPackage():List<String?>
     @Update
     fun update(setupBoxContent: SetupBoxContent)
+
+    @Query("DELETE FROM setupBoxContent")
+    fun clearData()
 
 
 

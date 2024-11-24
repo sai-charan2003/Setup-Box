@@ -28,5 +28,9 @@ class SetUpBoxRepoImp @Inject constructor(private val setUpBoxContentDAO: SetUpB
         setUpBoxContentDAO.update(setupBoxContent)
     }
 
+    override fun clearAllData() {
+        setUpBoxContentDAO.clearAllData()
+    }
+
 
 }

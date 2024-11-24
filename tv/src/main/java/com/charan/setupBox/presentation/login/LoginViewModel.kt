@@ -7,14 +7,12 @@ import com.charan.setupBox.data.repository.SupabaseRepo
 import com.charan.setupBox.utils.LoginState
 import com.charan.setupBox.utils.ProcessState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.util.Identity.decode
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo) : ViewModel() {
@@ -23,6 +21,11 @@ class LoginViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo)
     private val _authenticationStatus  = MutableStateFlow<ProcessState?>(null)
     val authenticationStatus = _authenticationStatus.asStateFlow()
 
+    private val _optTextField = MutableStateFlow("")
+    val otpTextField = _optTextField.asStateFlow()
+
+
+
 
 
     private val _loginState  = MutableStateFlow<LoginState?>(null)
@@ -30,23 +33,24 @@ class LoginViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo)
 
 
     suspend fun getAuthenticationCode()  {
+        _loginState.tryEmit(LoginState.Loading)
         viewModelScope.launch (Dispatchers.IO){
             supabaseRepo.addCodeToTVTable().collectLatest {
                 _loginState.tryEmit(it)
+
             }
         }
 
     }
 
     fun observerOTPStatus(code : String){
-        Log.d("TAG", "observerOTPStatus: hi")
-        val job = viewModelScope.launch (Dispatchers.IO){
+
+        viewModelScope.launch (Dispatchers.IO){
             supabaseRepo.observeData(code).collectLatest {
                 Log.d("TAG", "observerOTPStatus: $it")
                 if (it != null) {
-                    if(it.session_id.isNullOrEmpty().not()){
-
-                        supabaseRepo.sentOTPLogin(it.session_id!!).collectLatest {
+                    if(it.email.isNullOrEmpty().not()){
+                        supabaseRepo.sentOTPLogin(it.email!!).collectLatest {
                             _loginState.tryEmit(it)
 
                         }
@@ -59,13 +63,13 @@ class LoginViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo)
 
     }
 
-    fun verifyOTPStatus(email : String,code : String){
-        Log.d("TAG", "verifyOTPStatus: $email")
-        Log.d("TAG", "verifyOTPStatus: $code")
-
+    fun verifyOTPStatus(email : String){
+        _loginState.tryEmit(LoginState.Loading)
         viewModelScope.launch (Dispatchers.IO){
-            supabaseRepo.verifyOTP(email,code).collectLatest {
+            supabaseRepo.verifyOTP(email,_optTextField.value).collectLatest {
                 _loginState.tryEmit(it)
+
+
             }
         }
 
@@ -80,6 +84,19 @@ class LoginViewModel @Inject constructor(private val supabaseRepo: SupabaseRepo)
     }
     fun resetLoginState() {
         _loginState.tryEmit(null)
+    }
+
+    fun otpTextValue(code : String){
+        _optTextField.value = code
+    }
+    fun resetTextField(){
+        _optTextField.value = ""
+    }
+
+    fun changeAuthenticationStatus(code : String){
+        viewModelScope.launch {
+            supabaseRepo.updateAuthenticationStatus(code)
+        }
     }
 
 

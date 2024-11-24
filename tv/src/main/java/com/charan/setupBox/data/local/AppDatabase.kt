@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.charan.setupBox.data.local.dao.SetUpBoxContentDAO
 import com.charan.setupBox.data.local.entity.SetupBoxContent
 
-@Database(entities = arrayOf(SetupBoxContent::class), version = 3,exportSchema = false)
+@Database(entities = arrayOf(SetupBoxContent::class), version = 4,exportSchema = false)
 
 abstract class AppDatabase: RoomDatabase() {
     abstract fun setupBoxDAO(): SetUpBoxContentDAO
@@ -25,7 +25,7 @@ abstract class AppDatabase: RoomDatabase() {
                     AppDatabase::class.java,
                     "AppDatabase"
                 )
-                    .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                     .fallbackToDestructiveMigrationFrom().build()
                 INSTANCE = instance
                 instance
@@ -34,6 +34,13 @@ abstract class AppDatabase: RoomDatabase() {
         private val MIGRATION_2_3= object : Migration(2,3){
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE setupBoxContent ADD COLUMN app_Package TEXT DEFAULT NULL")
+            }
+
+        }
+        val MIGRATION_3_4 = object : Migration(3,4){
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE setupBoxContent ADD COLUMN uuid TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE setupBoxContent ADD COLUMN email TEXT DEFAULT NULL")
             }
 
         }

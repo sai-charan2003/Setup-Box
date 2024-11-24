@@ -18,3 +18,15 @@ object LoginScreenNav
 
 @Serializable
 object TVAuthenticationNav
+
+@Serializable
+object AccountScreenNav
+
+@Serializable
+object AboutAppNav
+
+@Serializable
+object SettingsScreenNav
+
+@Serializable
+object LicenseScreenNav

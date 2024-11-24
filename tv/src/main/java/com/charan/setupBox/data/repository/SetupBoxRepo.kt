@@ -9,4 +9,5 @@ interface SetUpBoxContentRepository {
     fun getAllDataNonLiveData(): List<SetupBoxContent>
     fun deleteById(id: Int)
     fun update(setupBoxContent: SetupBoxContent)
+    fun clearAllData()
 }

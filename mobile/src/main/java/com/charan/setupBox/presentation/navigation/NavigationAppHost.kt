@@ -6,17 +6,19 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.internal.composableLambda
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.charan.setupBox.data.remote.supabaseClient
-import com.charan.setupBox.presentation.AddNewChannel
-import com.charan.setupBox.presentation.HomeScreen
+import com.charan.setupBox.presentation.addChannel.AddNewChannel
+import com.charan.setupBox.presentation.home.HomeScreen
 import com.charan.setupBox.presentation.login.LoginScreen
+import com.charan.setupBox.presentation.settings.SettingsScreen
+import com.charan.setupBox.presentation.settings.aboutapp.AboutAppScreen
+import com.charan.setupBox.presentation.settings.aboutapp.LicenseScreen
+import com.charan.setupBox.presentation.settings.account.AccountScreen
 import com.charan.setupBox.presentation.tvAutentication.TVAuthentication
-import com.charan.setupBox.utils.SupabaseUtils
 
 @Composable
 fun NavigationAppHost(navHostController: NavHostController,sharedURL : String?,isLoggedIn : Boolean?) {
@@ -67,6 +69,18 @@ fun NavigationAppHost(navHostController: NavHostController,sharedURL : String?,i
         
         composable<TVAuthenticationNav> { 
             TVAuthentication(navHostController = navHostController)
+        }
+        composable<AccountScreenNav>(){
+            AccountScreen(navHostController = navHostController)
+        }
+        composable<AboutAppNav> { 
+            AboutAppScreen(navHostController = navHostController)
+        }
+        composable<SettingsScreenNav> {
+            SettingsScreen(navHostController = navHostController)
+        }
+        composable<LicenseScreenNav> {
+            LicenseScreen(navHostController = navHostController)
         }
 
     }
