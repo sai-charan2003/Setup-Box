@@ -107,7 +107,8 @@ fun HomeScreen(
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // Main content: Home screen
+        
+
         LazyColumn(
             modifier = Modifier,
             contentPadding = PaddingValues(0.dp),
@@ -161,7 +162,7 @@ fun HomeScreen(
             }
         }
 
-        // Modal side sheet
+        
         if (modalSheetState) {
             Box(
                 modifier = Modifier
@@ -249,7 +250,7 @@ fun ModalDrawerContent(
             }
         }
 
-        // Add the version text at the bottom
+        
         Text(
             text = "Setup Box ${BuildConfig.VERSION_NAME}",
             style = MaterialTheme.typography.bodySmall,
