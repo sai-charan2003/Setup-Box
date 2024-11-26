@@ -2,10 +2,11 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-kapt")
-    id("org.jetbrains.kotlin.plugin.serialization")
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.kotlin.serialization)
 
 }
 
@@ -20,8 +21,8 @@ android {
         applicationId = "com.charan.setupBox"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -39,6 +40,7 @@ android {
             )
         }
     }
+    hilt { enableAggregatingTask = false }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -69,11 +71,11 @@ dependencies {
     implementation (libs.postgrest.kt)
     implementation (libs.realtime.kt)
     implementation (libs.storage.kt)
-    implementation(libs.gotrue.kt)
     implementation(libs.firebase.crashlytics)
     annotationProcessor (libs.androidx.room.compiler)
     implementation (libs.androidx.room.runtime)
     implementation (libs.androidx.room.ktx)
+    implementation(libs.auth.kt)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.androidx.runtime.livedata)
     kapt("androidx.room:room-compiler:2.6.1")
@@ -90,4 +92,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation (libs.hilt.android)
+    kapt (libs.hilt.compiler)
+    implementation (libs.androidx.hilt.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.navigation.compose)
+    implementation ("androidx.compose.material:material:1.7.5")
 }

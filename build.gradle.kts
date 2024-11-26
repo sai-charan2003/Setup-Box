@@ -9,7 +9,6 @@ buildscript {
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
-    kotlin("plugin.serialization") version "1.8.10"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.google.gms.google.services) apply false

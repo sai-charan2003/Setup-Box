@@ -17,17 +17,19 @@
         android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name=".SetupBoxApplication"
+
         android:theme="@style/Theme.SetupBox.MySplash">
         <activity
-            android:name=".Screens.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>
