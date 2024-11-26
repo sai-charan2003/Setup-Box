@@ -13,4 +13,5 @@ interface SetUpBoxRepo {
     fun getDataById(id:Int): SetupBoxContent
     fun selectDistinctAppPackage() : List<String?>
     fun clearData()
+    fun getDataByUUID(uuid : String) : SetupBoxContent
 }

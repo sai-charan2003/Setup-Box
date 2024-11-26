@@ -38,6 +38,8 @@ interface SetUpBoxContentDAO {
     @Query("DELETE FROM setupBoxContent")
     fun clearData()
 
+    @Query("SELECT * FROM setupBoxContent WHERE uuid =:uuid")
+    fun getDataByUUID(uuid : String) : SetupBoxContent
 
 
 

@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SetupBoxContent (
     @PrimaryKey(autoGenerate = true)
-    val id:Int?=null,
+    var id:Int?=null,
     val channelLink:String?=null,
     val channelName:String?=null,
     val channelPhoto:String?=null,

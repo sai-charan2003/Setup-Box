@@ -39,5 +39,10 @@ class SetUpBoxRepoImp @Inject constructor(private val setUpBoxContentDAO: SetUpB
         setUpBoxContentDAO.clearData()
     }
 
+    override fun getDataByUUID(uuid : String) : SetupBoxContent{
+        return setUpBoxContentDAO.getDataByUUID(uuid)
+    }
+
+
 
 }

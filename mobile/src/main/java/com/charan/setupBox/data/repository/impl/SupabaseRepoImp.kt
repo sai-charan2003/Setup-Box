@@ -76,6 +76,8 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
                             eq("email",SupabaseUtils.getEmail()!!)
                         }
                     }
+                val setupBoxData = setUpBoxRepo.getDataByUUID(setupBoxContent.uuid!!)
+                setupBoxContent.id = setupBoxData.id
                 setUpBoxRepo.update(setupBoxContent)
                 processState.tryEmit(ProcessState.Success)
 
