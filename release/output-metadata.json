@@ -13,7 +13,7 @@
       "attributes": [],
       "versionCode": 2,
       "versionName": "2.0",
-      "outputFile": "tv-release.apk"
+      "outputFile": "mobile-release.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/tv-release.dm"
+        "baselineProfiles/1/mobile-release.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/tv-release.dm"
+        "baselineProfiles/0/mobile-release.dm"
       ]
     }
   ],

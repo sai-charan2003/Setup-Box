@@ -28,6 +28,8 @@ import javax.inject.Inject
 class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo) : SupabaseRepo {
     override suspend fun insertData(setupBoxContent: SetupBoxContent): Flow<ProcessState> {
         val processState= MutableStateFlow<ProcessState>(ProcessState.Loading)
+        val uuid = UUID.randomUUID().toString()
+        val email = SupabaseUtils.getEmail()
 
             try{
                 supabaseClient.client.from(AppConstants.SETUPBOXCONTENT).insert(
@@ -37,10 +39,12 @@ class SupabaseRepoImp @Inject constructor(private val setUpBoxRepo: SetUpBoxRepo
                         channelPhoto = setupBoxContent.channelPhoto,
                         Category = setupBoxContent.Category,
                         app_Package = setupBoxContent.app_Package,
-                        uuid = UUID.randomUUID().toString(),
-                        email = SupabaseUtils.getEmail()
+                        uuid = uuid,
+                        email = email
                     )
                 )
+                setupBoxContent.uuid = uuid
+                setupBoxContent.email = email
                 setUpBoxRepo.insert(setupBoxContent)
                 processState.tryEmit(ProcessState.Success)
 

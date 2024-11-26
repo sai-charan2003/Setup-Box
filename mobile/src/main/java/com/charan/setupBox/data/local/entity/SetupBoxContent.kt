@@ -19,7 +19,7 @@ data class SetupBoxContent (
     val channelPhoto:String?=null,
     val Category:String?=null,
     val app_Package:String?=null,
-    val uuid : String? = null,
-    val email : String? = null
+    var uuid : String? = null,
+    var email : String? = null
 
 )

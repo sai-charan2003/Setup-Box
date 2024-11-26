@@ -99,10 +99,13 @@ fun OTPScreen(
             }
 
             is ProcessState.Success -> {
-                navHostController.navigate(HomeScreenNav){
-                    popUpTo(OTPScreenNav(null,null)) { inclusive = true }
-                }
                 viewModel.changeAuthenticationStatus(code)
+                navHostController.navigate(HomeScreenNav){
+                    popUpTo(navHostController.graph.id){
+                        inclusive = true
+                    }
+                }
+
             }
             else -> {
 

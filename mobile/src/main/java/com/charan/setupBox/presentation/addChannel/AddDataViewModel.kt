@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 
@@ -119,6 +120,7 @@ class AddDataViewModel @Inject constructor(
                     channelPhoto = currentState.channelPhoto,
                     Category = currentState.category,
                     app_Package = currentState.packageName,
+                    uuid = _uiState.value.uuid
                 )
             ).collectLatest {
                 _saveDataState.tryEmit(it)
