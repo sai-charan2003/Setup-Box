@@ -20,9 +20,7 @@ SetupBox is a TV application built with Jetpack Compose. It has a companion mobi
 
 ### Backend
 - Powered by **Supabase** for efficient and real-time database synchronization.
-- Supports communication between the TV and mobile apps:
-  - A TV displays a unique code for login, which can be entered on the mobile app for authentication.
-- Ensures secure data handling and robust synchronization for a seamless experience.
+
 
  
   
