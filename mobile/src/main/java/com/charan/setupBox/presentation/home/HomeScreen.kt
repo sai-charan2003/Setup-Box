@@ -1,6 +1,6 @@
 package com.charan.setupBox.presentation.home
 
-import android.app.Application
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 
@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,25 +33,25 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.charan.setupBox.presentation.navigation.AddNewChannelScreenNav
 import com.charan.setupBox.presentation.navigation.SettingsScreenNav
-import com.charan.setupBox.presentation.navigation.TVAuthenticationNav
+import com.charan.setupBox.utils.AppUtils
 
 import com.charan.setupBox.utils.ProcessState
 
@@ -68,6 +67,8 @@ fun HomeScreen(
         mutableStateOf(sharedURL)
 
     }
+    val textMeasurer = rememberTextMeasurer()
+    val textStyle = MaterialTheme.typography.titleLarge.copy(color = AppUtils.getTextColorForPlaceholder(), fontWeight = FontWeight.Bold)
 
     val scroll = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val isRefreshing by homeViewModel.refreshState.collectAsState()
@@ -144,15 +145,37 @@ fun HomeScreen(
                                         .padding(top = 20.dp, bottom = 20.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    AsyncImage(
-                                        model = allData.value[item].channelPhoto,
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier
-                                            .width(120.dp)
+                                    if(allData.value[item].channelPhoto.isNullOrEmpty().not()) {
+                                        AsyncImage(
+                                            model = allData.value[item].channelPhoto,
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .width(120.dp)
+                                                .height(71.dp)
+                                                .clip(RoundedCornerShape(10.dp))
+                                        )
+                                    } else {
+                                        Canvas(modifier = Modifier.width(120.dp)
                                             .height(71.dp)
-                                            .clip(RoundedCornerShape(10.dp))
-                                    )
+                                            .clip(RoundedCornerShape(10.dp))) {
+                                            val text = allData.value[item].channelName.toString()
+                                            val textLayoutResult = textMeasurer.measure(text = text, style = textStyle)
+                                            val x = (size.width - textLayoutResult.size.width) / 2
+                                            val y = (size.height - textLayoutResult.size.height) / 2
+
+                                            drawRect(AppUtils.getColorForPlaceHolderBackground(),)
+                                            drawText(
+                                                textMeasurer,text,
+                                                style = textStyle,
+                                                topLeft = Offset(x, y),
+
+
+                                            )
+
+
+                                        }
+                                    }
                                     Text(
                                         allData.value[item].channelName.toString(),
                                         modifier = Modifier.padding(10.dp),
