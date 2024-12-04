@@ -51,9 +51,10 @@ class AddDataViewModel @Inject constructor(
                     category = data.Category ?: "",
                     uuid = data.uuid ?: ""
                 )
-                loadDistinctPackages()
+
             }
         }
+        loadDistinctPackages()
     }
 
     private fun loadDistinctPackages() {
