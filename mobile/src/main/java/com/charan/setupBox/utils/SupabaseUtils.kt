@@ -22,4 +22,14 @@ object SupabaseUtils {
             return null
         }
     }
+
+    fun getProfilePic() : String? {
+        try {
+            return supabaseClient.client.auth.currentUserOrNull()?.identities?.get(0)?.identityData?.get(
+                "avatar_url"
+            ).toString().substringAfter("\"").substringBefore("\"")
+        } catch (e:Exception){
+            return null
+        }
+    }
 }

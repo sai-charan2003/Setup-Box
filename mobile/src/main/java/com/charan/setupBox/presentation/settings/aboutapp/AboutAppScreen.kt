@@ -6,7 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
@@ -30,7 +34,13 @@ fun AboutAppScreen(navHostController: NavHostController){
         topBar = {
             LargeTopAppBar(
                 title = { Text("About App") },
-                scrollBehavior = scroll
+                scrollBehavior = scroll,
+                navigationIcon = {
+                    IconButton(onClick = { navHostController.popBackStack()}) {
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "back")
+
+                    }
+                }
             )
         }
     ) {

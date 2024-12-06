@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +42,7 @@ import androidx.navigation.NavHostController
 import com.charan.setupBox.presentation.navigation.HomeScreenNav
 import com.charan.setupBox.presentation.navigation.LoginScreenNav
 import com.charan.setupBox.presentation.settings.SettingsViewModel
+import com.charan.setupBox.presentation.settings.components.AvatarImage
 import com.charan.setupBox.utils.ProcessState
 import com.charan.setupBox.utils.SupabaseUtils
 
@@ -91,13 +96,26 @@ fun AccountScreen(
         topBar = {
             LargeTopAppBar(
                 title = { Text("Account") },
-                scrollBehavior = scroll
+                scrollBehavior = scroll,
+                navigationIcon = {
+                    IconButton(onClick = { navHostController.popBackStack()}) {
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "back")
+
+                    }
+                }
             )
         }
     ) {
-        LazyColumn(modifier = Modifier.padding(it).nestedScroll(scroll.nestedScrollConnection)) {
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .padding(it)
+            .nestedScroll(scroll.nestedScrollConnection)) {
             item {
-                ListItem(headlineContent = { Text(text = SupabaseUtils.getEmail() ?: "null") })
+                ListItem(
+                    leadingContent = {
+                        AvatarImage(imageUrl = SupabaseUtils.getProfilePic())
+                    },
+                    headlineContent = { Text(text = SupabaseUtils.getEmail() ?: "null") })
                 ListItem(
                     headlineContent = { Text(text = "Logout") },
                     modifier = Modifier
@@ -153,7 +171,9 @@ fun AccountScreen(
                 Button(
                     onClick = { viewModel.addAuthenticationToken(context) },
                     enabled = authenticationStatus !is ProcessState.Loading,
-                    modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
 
                 )
                 {
